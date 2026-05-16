@@ -1,0 +1,6 @@
+redis==5.*
+httpx==0.28.*
+Pillow==11.*
+python-dotenv==1.*
+pydantic==2.*
+inotify==0.2.*

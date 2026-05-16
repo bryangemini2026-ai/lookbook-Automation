@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.pyo
+node_modules/
+dist/
+.env
+*.db
+*.db-wal
+*.db-shm
+/opt/
+/srv/
+venv/
+.vite/

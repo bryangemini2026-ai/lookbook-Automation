@@ -1,0 +1,15 @@
+[Unit]
+Description=Lookbook Watch Folder Daemon
+After=network.target redis-server.service
+
+[Service]
+Type=simple
+User=lookbook
+WorkingDirectory=/opt/lookbook/worker
+ExecStart=/opt/lookbook/worker/venv/bin/python watcher.py
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/lookbook/.env
+
+[Install]
+WantedBy=multi-user.target

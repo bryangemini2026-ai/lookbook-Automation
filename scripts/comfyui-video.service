@@ -1,0 +1,19 @@
+[Unit]
+Description=ComfyUI Video Server (:8288)
+After=network.target
+
+[Service]
+Type=simple
+User=lookbook
+WorkingDirectory=/opt/comfyui/video
+ExecStartPre=/opt/lookbook/scripts/gpu-guard.sh check video
+ExecStart=/opt/comfyui/video/venv/bin/python main.py \
+    --listen 0.0.0.0 --port 8288 \
+    --use-split-cross-attention --force-fp16
+ExecStopPost=/opt/lookbook/scripts/gpu-guard.sh cleanup video
+Restart=on-failure
+RestartSec=10
+Environment=CUDA_VISIBLE_DEVICES=0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=Lookbook PipelineWorker
+After=network.target redis-server.service
+
+[Service]
+Type=simple
+User=lookbook
+WorkingDirectory=/opt/lookbook/worker
+ExecStart=/opt/lookbook/worker/venv/bin/python main.py
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/lookbook/.env
+
+[Install]
+WantedBy=multi-user.target

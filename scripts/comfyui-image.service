@@ -1,0 +1,19 @@
+[Unit]
+Description=ComfyUI Image Server (:8188)
+After=network.target
+
+[Service]
+Type=simple
+User=lookbook
+WorkingDirectory=/opt/comfyui/image
+ExecStartPre=/opt/lookbook/scripts/gpu-guard.sh check image
+ExecStart=/opt/comfyui/image/venv/bin/python main.py \
+    --listen 0.0.0.0 --port 8188 \
+    --use-split-cross-attention --force-fp16
+ExecStopPost=/opt/lookbook/scripts/gpu-guard.sh cleanup image
+Restart=on-failure
+RestartSec=10
+Environment=CUDA_VISIBLE_DEVICES=0
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=Lookbook FastAPI Gateway (:8000)
+After=network.target redis-server.service
+
+[Service]
+Type=simple
+User=lookbook
+WorkingDirectory=/opt/lookbook/gateway
+ExecStart=/opt/lookbook/gateway/venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
+Restart=always
+RestartSec=5
+EnvironmentFile=/opt/lookbook/.env
+
+[Install]
+WantedBy=multi-user.target
