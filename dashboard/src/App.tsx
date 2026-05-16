@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { LayoutDashboard, Image, List, Users, Sparkles, Settings } from 'lucide-react'
+import { getVersion, type SystemVersion } from './lib/api'
 import Dashboard from './pages/Dashboard'
 import Generate from './pages/Generate'
 import Queue from './pages/Queue'
@@ -18,6 +20,13 @@ const NAV_ITEMS = [
 
 export default function App() {
   const location = useLocation()
+  const [version, setVersion] = useState<SystemVersion | null>(null)
+
+  useEffect(() => {
+    getVersion()
+      .then(({ data }) => setVersion(data))
+      .catch(() => {})
+  }, [])
 
   return (
     <div className="flex h-screen bg-gray-950 text-gray-100">
@@ -43,6 +52,19 @@ export default function App() {
             </Link>
           ))}
         </nav>
+
+        {/* Version Footer */}
+        {version && (
+          <div className="p-3 border-t border-gray-800">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-green-500" />
+              <span className="text-xs font-mono text-gray-400">{version.version}</span>
+            </div>
+            <p className="text-[10px] text-gray-600 font-mono mt-1">
+              {version.commit} · {version.branch}
+            </p>
+          </div>
+        )}
       </aside>
 
       {/* Main content */}

@@ -1,0 +1,89 @@
+name: Auto Version & Deploy
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  version-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Latest tag: $TAG"
+
+      - name: Bump version
+        id: bump
+        run: |
+          LATEST="${{ steps.latest.outputs.tag }}"
+          VERSION="${LATEST#v}"
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+
+          # Auto-bump patch version
+          NEW_PATCH=$((PATCH + 1))
+          NEW_VERSION="v${MAJOR}.${MINOR}.${NEW_PATCH}"
+
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $NEW_VERSION"
+
+      - name: Write version file
+        run: |
+          echo '${{ steps.bump.outputs.version }}' > VERSION
+          echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> VERSION
+          echo "${{ github.sha }}" >> VERSION
+
+      - name: Commit version file
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add VERSION
+          git commit -m "chore: bump to ${{ steps.bump.outputs.version }}" || exit 0
+          git push
+
+      - name: Create tag
+        run: |
+          git tag ${{ steps.bump.outputs.version }}
+          git push origin ${{ steps.bump.outputs.version }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.bump.outputs.version }}
+          name: ${{ steps.bump.outputs.version }}
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+
+  deploy:
+    needs: version-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger deploy webhook
+        run: |
+          # Send webhook to Computer A via Tailscale or public endpoint
+          # Set DEPLOY_WEBHOOK_URL in GitHub Secrets
+          if [ -n "${{ secrets.DEPLOY_WEBHOOK_URL }}" ]; then
+            curl -s -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
+              -H "Content-Type: application/json" \
+              -H "X-Deploy-Token: ${{ secrets.DEPLOY_TOKEN }}" \
+              -d '{"version":"${{ needs.version-and-release.outputs.version }}","sha":"${{ github.sha }}"}' \
+              || echo "Webhook failed (server may be offline)"
+          else
+            echo "DEPLOY_WEBHOOK_URL not set — skipping auto-deploy"
+            echo "Set DEPLOY_WEBHOOK_URL in repo secrets to enable auto-deploy"
+          fi
+        env:
+          DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}

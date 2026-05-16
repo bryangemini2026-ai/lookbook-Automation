@@ -87,3 +87,16 @@ export const listSkills = () => api.get<Skill[]>('/skills/')
 export const listToolSeeds = () => api.get<ToolSeed[]>('/skills/tool-seeds')
 export const listAgentToolSeeds = (agentId: string) => api.get<ToolSeed[]>(`/skills/tool-seeds/${agentId}`)
 export const getDecisions = () => api.get<{ content: string }>('/skills/decisions')
+
+// ── System ──
+
+export interface SystemVersion {
+  version: string
+  timestamp: string
+  sha: string
+  commit: string
+  branch: string
+  server_time: string
+}
+
+export const getVersion = () => api.get<SystemVersion>('/system/version')
