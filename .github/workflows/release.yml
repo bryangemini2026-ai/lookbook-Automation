@@ -44,11 +44,28 @@ jobs:
           echo "$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> VERSION
           echo "${{ github.sha }}" >> VERSION
 
-      - name: Commit version file
+      - name: Update README version badge
+        run: |
+          VERSION="${{ steps.bump.outputs.version }}"
+          DATE=$(date -u +%Y-%m-%d)
+
+          # Update version badge in README
+          sed -i "s/Version-v[0-9]*\.[0-9]*\.[0-9]*/Version-${VERSION}/g" README.md
+          sed -i "s/\*\*Current Version:\*\* v[0-9]*\.[0-9]*\.[0-9]*/\*\*Current Version:\*\* ${VERSION}/g" README.md
+          sed -i "s/\*\*Last Updated:\*\* [0-9-]*/\*\*Last Updated:\*\* ${DATE}/g" README.md
+
+          # If no version line exists, add one after the title
+          if ! grep -q "Current Version" README.md; then
+            sed -i "/^# Lookbook SNS Automation/a\\
+            \\
+            > **Current Version:** ${VERSION} | **Last Updated:** ${DATE}" README.md
+          fi
+
+      - name: Commit version + README
         run: |
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.name "github-actions[bot]"
-          git add VERSION
+          git add VERSION README.md
           git commit -m "chore: bump to ${{ steps.bump.outputs.version }}" || exit 0
           git push
 
@@ -72,8 +89,6 @@ jobs:
     steps:
       - name: Trigger deploy webhook
         run: |
-          # Send webhook to Computer A via Tailscale or public endpoint
-          # Set DEPLOY_WEBHOOK_URL in GitHub Secrets
           if [ -n "${{ secrets.DEPLOY_WEBHOOK_URL }}" ]; then
             curl -s -X POST "${{ secrets.DEPLOY_WEBHOOK_URL }}" \
               -H "Content-Type: application/json" \
@@ -82,7 +97,6 @@ jobs:
               || echo "Webhook failed (server may be offline)"
           else
             echo "DEPLOY_WEBHOOK_URL not set — skipping auto-deploy"
-            echo "Set DEPLOY_WEBHOOK_URL in repo secrets to enable auto-deploy"
           fi
         env:
           DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
