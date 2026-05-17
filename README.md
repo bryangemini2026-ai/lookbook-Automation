@@ -1,9 +1,9 @@
 # Lookbook SNS Automation
 
-![Version-v0.0.3](https://img.shields.io/badge/Version-v0.0.3-blue)
+![Version-v0.0.4](https://img.shields.io/badge/Version-v0.0.4-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> **Current Version:** v0.0.3 | **Last Updated:** 2026-05-17
+> **Current Version:** v0.0.4 | **Last Updated:** 2026-05-17
 
 AI 기반 패션 룩북 콘텐츠 자동 생성 및 SNS 자동 포스팅 시스템.
 
