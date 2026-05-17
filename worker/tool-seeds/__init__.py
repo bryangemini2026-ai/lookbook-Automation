@@ -5,7 +5,7 @@ Loads and executes tools from the tool-seeds directory.
 Each tool is a {agent}/{tool_name}.py file with a run() function.
 """
 
-import importlib
+import importlib.util
 import os
 
 

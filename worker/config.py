@@ -11,7 +11,7 @@ class Settings:
     COMFYUI_VIDEO_URL: str = os.getenv("COMFYUI_VIDEO_URL", "http://localhost:8288")
     TELEGRAM_BOT_TOKEN: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
     TELEGRAM_CHAT_ID: str = os.getenv("TELEGRAM_CHAT_ID", "")
-    STORAGE_BASE: str = os.getenv("STORAGE_BASE", "/srv/lookbook")
+    STORAGE_BASE: str = os.getenv("STORAGE_BASE", os.path.join(os.path.dirname(__file__), "..", "data", "lookbook"))
     GUARD_SCRIPT: str = "/opt/lookbook/scripts/gpu-guard.sh"
 
 
