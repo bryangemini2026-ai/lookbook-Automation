@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.db import init_db
-from app.routes import jobs, control, agents, skills, system
+from app.routes import jobs, control, agents, skills, system, pipeline
 
 
 @asynccontextmanager
@@ -31,6 +31,7 @@ app.include_router(control.router, prefix="/api/control", tags=["control"])
 app.include_router(agents.router, prefix="/api/agents", tags=["agents"])
 app.include_router(skills.router, prefix="/api/skills", tags=["skills"])
 app.include_router(system.router, prefix="/api/system", tags=["system"])
+app.include_router(pipeline.router, prefix="/api/pipeline", tags=["pipeline"])
 
 
 @app.get("/health")
