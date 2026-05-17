@@ -59,6 +59,41 @@ export interface ToolSeed {
   has_code: boolean
 }
 
+export interface SystemVersion {
+  version: string
+  timestamp: string
+  sha: string
+  commit: string
+  branch: string
+  server_time: string
+}
+
+export interface PipelineStatus {
+  job_id: string
+  status: string
+  steps?: Record<string, unknown>
+}
+
+export interface Product {
+  platform: string
+  product_id: string
+  name: string
+  brand: string
+  price: number
+  original_price: number
+  discount_rate: number
+  category: string
+  image_url: string
+  product_url: string
+  affiliate_url: string
+  ranking: number
+  review_count: number
+  rating: number
+  tags: string[]
+  season: string
+  collected_at: string
+}
+
 // ── Jobs ──
 
 export const createJob = (data: Record<string, unknown>) => api.post('/jobs/', data)
@@ -79,6 +114,9 @@ export const getQueueStatus = () => api.get<QueueStatus>('/control/queue')
 
 export const listAgents = () => api.get<Agent[]>('/agents/')
 export const getAgent = (id: string) => api.get<Agent>(`/agents/${id}`)
+export const createAgent = (data: Partial<Agent>) => api.post('/agents/', data)
+export const updateAgent = (id: string, data: Partial<Agent>) => api.put(`/agents/${id}`, data)
+export const deleteAgent = (id: string) => api.delete(`/agents/${id}`)
 export const getAgentTools = (id: string) => api.get<ToolSeed[]>(`/agents/${id}/tools`)
 
 // ── Skills ──
@@ -90,13 +128,27 @@ export const getDecisions = () => api.get<{ content: string }>('/skills/decision
 
 // ── System ──
 
-export interface SystemVersion {
-  version: string
-  timestamp: string
-  sha: string
-  commit: string
-  branch: string
-  server_time: string
-}
-
 export const getVersion = () => api.get<SystemVersion>('/system/version')
+
+// ── Pipeline ──
+
+export const runPipeline = (data: {
+  product?: Record<string, unknown>
+  start_step?: number
+  max_retries?: number
+}) => api.post('/pipeline/run', data)
+
+export const runCrawl = (data: { category?: string; limit?: number }) =>
+  api.post('/pipeline/crawl', data)
+
+export const getPipelineStatus = (jobId: string) =>
+  api.get<PipelineStatus>(`/pipeline/status/${jobId}`)
+
+export const approvePipeline = (jobId: string) =>
+  api.post(`/pipeline/approve/${jobId}`)
+
+export const retryPipeline = (jobId: string) =>
+  api.post(`/pipeline/retry/${jobId}`)
+
+export const editPipeline = (jobId: string, editText: string) =>
+  api.post(`/pipeline/edit/${jobId}`, null, { params: { edit_text: editText } })

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, Image, List, Users, Sparkles, Settings } from 'lucide-react'
+import {
+  LayoutDashboard, Image, List, Users, Sparkles, Settings,
+  Play, ShoppingBag, Activity
+} from 'lucide-react'
 import { getVersion, type SystemVersion } from './lib/api'
 import Tooltip from './components/common/Tooltip'
 import Dashboard from './pages/Dashboard'
@@ -9,10 +12,14 @@ import Queue from './pages/Queue'
 import Agents from './pages/Agents'
 import Skills from './pages/Skills'
 import SettingsPage from './pages/Settings'
+import Pipeline from './pages/Pipeline'
+import Crawling from './pages/Crawling'
 
 const NAV_ITEMS = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard, tooltip: '시스템 현황, GPU 상태, 큐 통계를 한눈에 확인합니다' },
   { path: '/generate', label: 'Generate', icon: Image, tooltip: '프롬프트를 입력하고 룩북 이미지를 생성합니다' },
+  { path: '/pipeline', label: 'Pipeline', icon: Play, tooltip: '6단계 룩북 파이프라인을 실행하고 관리합니다' },
+  { path: '/crawling', label: 'Crawling', icon: ShoppingBag, tooltip: '무신사/쿠팡 인기 상품을 수집하고 관리합니다' },
   { path: '/queue', label: 'Queue', icon: List, tooltip: '생성 작업 목록과 진행 상태를 확인합니다' },
   { path: '/agents', label: 'Agents', icon: Users, tooltip: 'AI 에이전트를 등록, 수정, 삭제합니다' },
   { path: '/skills', label: 'Skills', icon: Sparkles, tooltip: '자동 추출된 스킬과 도구 시드를 관리합니다' },
@@ -39,7 +46,7 @@ export default function App() {
           </Tooltip>
           <p className="text-xs text-gray-500">SNS Automation</p>
         </div>
-        <nav className="flex-1 p-2">
+        <nav className="flex-1 p-2 overflow-y-auto">
           {NAV_ITEMS.map(({ path, label, icon: Icon, tooltip }) => (
             <Tooltip key={path} text={tooltip} position="right">
               <Link
@@ -60,7 +67,7 @@ export default function App() {
         {/* Version Footer */}
         {version && (
           <Tooltip
-            text={`커밋: ${version.commit} | 브랜치: ${version.branch} | 서버: ${version.server_time}`}
+            text={`커밋: ${version.commit} | 브랜치: ${version.branch}`}
             position="right"
           >
             <div className="p-3 border-t border-gray-800 cursor-default">
@@ -81,6 +88,8 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/generate" element={<Generate />} />
+          <Route path="/pipeline" element={<Pipeline />} />
+          <Route path="/crawling" element={<Crawling />} />
           <Route path="/queue" element={<Queue />} />
           <Route path="/agents" element={<Agents />} />
           <Route path="/skills" element={<Skills />} />
