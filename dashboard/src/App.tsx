@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Image, List, Users, Sparkles, Settings,
-  Play, ShoppingBag, Activity, ChevronRight, Zap
+  Play, ShoppingBag, Activity, ChevronRight, Zap, Construction
 } from 'lucide-react'
 import { getVersion, type SystemVersion } from './lib/api'
 import Dashboard from './pages/Dashboard'
@@ -18,6 +18,18 @@ const NAV_ITEMS = [
   { path: '/settings', label: 'Settings', icon: Settings, description: '시스템 설정' },
 ]
 
+function PlaceholderPage({ title }: { title: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center h-full gap-4 p-6">
+      <Construction size={48} style={{ color: 'var(--color-text-muted)' }} />
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-small" style={{ color: 'var(--color-text-muted)' }}>
+        This page is under construction
+      </p>
+    </div>
+  )
+}
+
 export default function App() {
   const location = useLocation()
   const [version, setVersion] = useState<SystemVersion | null>(null)
@@ -26,7 +38,7 @@ export default function App() {
   useEffect(() => {
     getVersion()
       .then(({ data }) => setVersion(data))
-      .catch(() => {})
+      .catch((err) => console.error('Failed to fetch version:', err))
   }, [])
 
   const currentNav = NAV_ITEMS.find(item => item.path === location.pathname) || NAV_ITEMS[0]
@@ -57,6 +69,7 @@ export default function App() {
             onClick={() => setCollapsed(!collapsed)}
             className="p-1.5 rounded-lg transition-colors"
             style={{ color: 'var(--color-text-muted)' }}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <ChevronRight size={16} className={`transition-transform ${collapsed ? '' : 'rotate-180'}`} />
           </button>
@@ -124,7 +137,7 @@ export default function App() {
         <header
           className="sticky top-0 z-10 px-6 py-4 border-b backdrop-blur-sm"
           style={{
-            background: 'rgba(0, 0, 0, 0.8)',
+            background: 'color-mix(in srgb, var(--color-surface-0) 80%, transparent)',
             borderColor: 'var(--color-border-subtle)',
           }}
         >
@@ -152,6 +165,13 @@ export default function App() {
         <div className="animate-fade-in">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/generate" element={<PlaceholderPage title="Generate" />} />
+            <Route path="/pipeline" element={<PlaceholderPage title="Pipeline" />} />
+            <Route path="/crawling" element={<PlaceholderPage title="Crawling" />} />
+            <Route path="/queue" element={<PlaceholderPage title="Queue" />} />
+            <Route path="/agents" element={<PlaceholderPage title="Agents" />} />
+            <Route path="/skills" element={<PlaceholderPage title="Skills" />} />
+            <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
           </Routes>
         </div>
       </main>
