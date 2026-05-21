@@ -8,7 +8,7 @@ interface CircularProgressProps {
   color?: 'blue' | 'green' | 'yellow' | 'red'
 }
 
-const colorValues: Record<'blue' | 'green' | 'yellow' | 'red', string> = {
+const colorValues: Record<NonNullable<CircularProgressProps['color']>, string> = {
   blue: 'var(--color-accent-blue)',
   green: 'var(--color-accent-green)',
   yellow: 'var(--color-accent-yellow)',
@@ -30,13 +30,21 @@ export default function CircularProgress({
   const offset = circumference - (percentage / 100) * circumference
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div
+      className="flex flex-col items-center gap-2"
+      role="progressbar"
+      aria-valuenow={percentage}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label || 'Progress'}
+    >
       <div className="relative" style={{ width: size, height: size }}>
         <svg
           width={size}
           height={size}
           viewBox={`0 0 ${size} ${size}`}
           className="transform -rotate-90"
+          aria-hidden="true"
         >
           {/* Background circle */}
           <circle
