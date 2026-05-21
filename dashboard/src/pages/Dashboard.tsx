@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
   Activity, Cpu, Clock, Users, TrendingUp, CheckCircle,
-  AlertCircle, Image, Video, Film
+  Image, Video, Film
 } from 'lucide-react'
 import StatusIndicator from '../components/StatusIndicator'
 import ProgressBar from '../components/ProgressBar'
@@ -23,44 +23,32 @@ export default function Dashboard() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [gpuRes, queueRes, pipelineRes, statsRes, activityRes, agentsRes] =
-        await Promise.all([
-          getGPUStatus(),
-          getQueueStatus(),
-          getPipelineStatus(),
-          getDashboardStats(),
-          getRecentActivity(),
-          getAgents(),
-        ])
+      try {
+        const [gpuRes, queueRes, pipelineRes, statsRes, activityRes, agentsRes] =
+          await Promise.all([
+            getGPUStatus(),
+            getQueueStatus(),
+            getPipelineStatus(),
+            getDashboardStats(),
+            getRecentActivity(),
+            getAgents(),
+          ])
 
-      setGpu(gpuRes.data)
-      setQueue(queueRes.data)
-      setPipeline(pipelineRes.data)
-      setStats(statsRes.data)
-      setActivity(activityRes.data)
-      setAgents(agentsRes.data)
+        setGpu(gpuRes.data)
+        setQueue(queueRes.data)
+        setPipeline(pipelineRes.data)
+        setStats(statsRes.data)
+        setActivity(activityRes.data)
+        setAgents(agentsRes.data)
+      } catch (error) {
+        console.error('Failed to fetch dashboard data:', error)
+      }
     }
 
     fetchData()
     const interval = setInterval(fetchData, 10000)
     return () => clearInterval(interval)
   }, [])
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active':
-      case 'completed':
-        return 'green'
-      case 'processing':
-        return 'blue'
-      case 'pending':
-        return 'yellow'
-      case 'error':
-        return 'red'
-      default:
-        return 'blue'
-    }
-  }
 
   const getTypeIcon = (type: string) => {
     switch (type) {

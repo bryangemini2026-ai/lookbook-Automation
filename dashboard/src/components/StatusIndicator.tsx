@@ -1,4 +1,4 @@
-type StatusType = 'active' | 'processing' | 'pending' | 'error' | 'idle'
+type StatusType = 'active' | 'processing' | 'pending' | 'error' | 'idle' | 'completed'
 
 interface StatusIndicatorProps {
   status: StatusType
@@ -13,6 +13,7 @@ const statusConfig: Record<StatusType, { class: string; label: string }> = {
   pending: { class: 'status-dot-pending', label: 'Pending' },
   error: { class: 'status-dot-error', label: 'Error' },
   idle: { class: 'status-dot-idle', label: 'Idle' },
+  completed: { class: 'status-dot-active', label: 'Completed' },
 }
 
 const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
