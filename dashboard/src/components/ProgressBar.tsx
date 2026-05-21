@@ -7,14 +7,14 @@ interface ProgressBarProps {
   color?: 'blue' | 'green' | 'yellow' | 'red'
 }
 
-const colorClasses: Record<string, string> = {
+const colorClasses: Record<'blue' | 'green' | 'yellow' | 'red', string> = {
   blue: 'bg-[var(--color-accent-blue)]',
   green: 'bg-[var(--color-accent-green)]',
   yellow: 'bg-[var(--color-accent-yellow)]',
   red: 'bg-[var(--color-accent-red)]',
 }
 
-const sizeClasses: Record<string, string> = {
+const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
   sm: 'h-1',
   md: 'h-2',
   lg: 'h-3',
@@ -28,7 +28,7 @@ export default function ProgressBar({
   size = 'md',
   color = 'blue',
 }: ProgressBarProps) {
-  const percentage = Math.min(Math.round((value / max) * 100), 100)
+  const percentage = max === 0 ? 0 : Math.max(0, Math.min(Math.round((value / max) * 100), 100))
 
   return (
     <div className="w-full">
@@ -49,14 +49,15 @@ export default function ProgressBar({
       <div
         className={`w-full rounded-full overflow-hidden ${sizeClasses[size]}`}
         style={{ background: 'var(--color-surface-3)' }}
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={max}
+        aria-label={label || 'Progress'}
       >
         <div
           className={`${colorClasses[color]} rounded-full transition-all duration-500 ease-out ${sizeClasses[size]}`}
           style={{ width: `${percentage}%` }}
-          role="progressbar"
-          aria-valuenow={value}
-          aria-valuemin={0}
-          aria-valuemax={max}
         />
       </div>
     </div>
