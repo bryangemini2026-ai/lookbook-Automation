@@ -28,6 +28,10 @@
   --color-accent-orange: #ff9800;
   --color-accent-pink: #e91e63;
 
+  /* Hover Colors */
+  --color-accent-blue-hover: #1976d2;
+  --color-accent-red-hover: #d32f2f;
+
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
@@ -71,7 +75,7 @@ body {
   border: 1px solid transparent;
   border-radius: 12px;
   padding: 20px;
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .card:hover {
@@ -99,9 +103,15 @@ body {
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   border: 1px solid transparent;
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-accent-blue);
+  outline-offset: 2px;
 }
 
 .btn-primary {
@@ -110,7 +120,7 @@ body {
 }
 
 .btn-primary:hover {
-  background: #1976d2;
+  background: var(--color-accent-blue-hover);
   transform: translateY(-1px);
 }
 
@@ -130,7 +140,7 @@ body {
 }
 
 .btn-danger:hover {
-  background: #d32f2f;
+  background: var(--color-accent-red-hover);
   transform: translateY(-1px);
 }
 
