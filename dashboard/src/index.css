@@ -1,7 +1,9 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ── Design Tokens ── */
-@theme {
+:root {
   /* Base Colors */
   --color-surface-0: #000000;
   --color-surface-1: #0a0a0a;
