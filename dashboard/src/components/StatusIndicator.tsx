@@ -1,5 +1,3 @@
-import { type ReactNode } from 'react'
-
 type StatusType = 'active' | 'processing' | 'pending' | 'error' | 'idle'
 
 interface StatusIndicatorProps {
@@ -17,7 +15,7 @@ const statusConfig: Record<StatusType, { class: string; label: string }> = {
   idle: { class: 'status-dot-idle', label: 'Idle' },
 }
 
-const sizeClasses: Record<string, string> = {
+const sizeClasses: Record<'sm' | 'md' | 'lg', string> = {
   sm: 'w-2 h-2',
   md: 'w-2.5 h-2.5',
   lg: 'w-3 h-3',
@@ -35,6 +33,7 @@ export default function StatusIndicator({
     <div className="flex items-center gap-2">
       <span
         className={`status-dot ${config.class} ${sizeClasses[size]}`}
+        role="img"
         aria-label={label || config.label}
       />
       {showLabel && (
